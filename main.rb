@@ -66,11 +66,11 @@ class Main
   # WHITE                   = RED + GREEN + BLUE
 
   def right()
-    lcd.backlight(Adafruit::LCD::Char16x2::WHITE)
+    @lcd.backlight(Adafruit::LCD::Char16x2::WHITE)
   end
 
   def left()
-    lcd.backlight(Adafruit::LCD::Char16x2::TEAL)
+    @lcd.backlight(Adafruit::LCD::Char16x2::TEAL)
   end
 
   def preparePredictions()
