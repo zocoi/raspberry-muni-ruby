@@ -49,7 +49,8 @@ class Main
   def predictions()
     @route = Muni::Route.find(@route.tag)
     predictions = @route.inbound.stop_at(@location).predictions
-    str = "#{@route.title}: " + predictions.map(&:minutes).join(", ")
+    str = "#{@route.title}:" + predictions.map(&:minutes).join(",")
+    str = str.scan(/.{1,16}/).join("\n")
     puts str
     str
   end
