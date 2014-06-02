@@ -78,7 +78,7 @@ class Main
     @t = Thread.new do
        loop do
          writePredictions()
-         sleep 2000
+         sleep 60
        end
      end
   end
