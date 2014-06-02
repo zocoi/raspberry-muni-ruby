@@ -74,8 +74,7 @@ class Main
   end
 
   def preparePredictions()
-    if @t
-      @t.kill
+    @t.kill if @t
     @t = Thread.new do
        loop do
          writePredictions()
