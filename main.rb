@@ -2,7 +2,6 @@ require 'muni'
 require_relative "lib/lcd/char16x2"
 
 class Main
-  attr_accessor :location, :routes, :route, :index
 
   def initialize
     @location = "Sansome St & Sutter St"
@@ -16,6 +15,7 @@ class Main
 
     @index ||= default_index
     @route ||= default_route
+    @isInbound ||= false
 
     @lcd = Adafruit::LCD::Char16x2.new{|lcd|
       lcd.clear
@@ -37,11 +37,9 @@ class Main
       when (buttons >> Adafruit::LCD::Char16x2::UP) & 1 > 0
         puts "UP pressed"
         up()
-        preparePredictions()
       when (buttons >> Adafruit::LCD::Char16x2::DOWN) & 1 > 0
         puts "DOWN pressed"
         down()
-        preparePredictions()
       end
       sleep 0.1
     end
@@ -50,37 +48,42 @@ class Main
   def up()
     @index = @index - 1
     @route = @routes[index]
+    writeAndSchedulePredictions()
   end
 
   def down()
     @index = @index + 1
     @route = @routes[index]
+    writeAndSchedulePredictions()
   end
 
-  # RED                     = 0x01
-  # GREEN                   = 0x02
-  # BLUE                    = 0x04
-  # YELLOW                  = RED + GREEN
-  # TEAL                    = GREEN + BLUE
-  # VIOLET                  = RED + BLUE
-  # WHITE                   = RED + GREEN + BLUE
-
   def right()
-    @lcd.backlight(Adafruit::LCD::Char16x2::WHITE)
+    switchDirection()
   end
 
   def left()
-    @lcd.backlight(Adafruit::LCD::Char16x2::TEAL)
+    switchDirection()
   end
 
-  def preparePredictions()
+  def switchDirection()
+    @isInbound = !@isInbound
+    @lcd.clear
+    if @isInbound
+      @lcd.message("Inbound")
+    else
+      @lcd.message("Outbound")
+    end
+    writeAndSchedulePredictions()
+  end
+
+  def writeAndSchedulePredictions()
     @t.kill if @t
     @t = Thread.new do
-       loop do
-         writePredictions()
-         sleep 60
-       end
-     end
+      loop do
+        writePredictions()
+        sleep 60
+      end
+    end
   end
 
   def writePredictions()
@@ -94,7 +97,11 @@ class Main
   # Get a prediction
   def predictions()
     @route = Muni::Route.find(@route.tag)
-    predictions = @route.outbound.stop_at(@location).predictions
+    if @isInbound
+      predictions = @route.inbound.stop_at(@location).predictions
+    else
+      predictions = @route.outbound.stop_at(@location).predictions
+    end
     str = "#{@route.title}:" + predictions.map(&:minutes).join(",")
     str = str.scan(/.{1,16}/).join("\n")
     puts str
