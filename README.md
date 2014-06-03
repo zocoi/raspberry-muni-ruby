@@ -1,4 +1,4 @@
 raspberry-muni
 ==============
 
-![alt tag](http://url/to/img.png)
+![alt tag](https://github.com/zocoi/raspberry-muni-ruby/raw/master/rasp.jpg)
