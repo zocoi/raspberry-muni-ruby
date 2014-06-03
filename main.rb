@@ -78,7 +78,7 @@ class Main
   end
 
   def writeAndSchedulePredictions()
-    @t.kill if @t.alive?
+    @t.kill if @t && @t.alive?
     @t = Thread.new do
       loop do
         writePredictions()
