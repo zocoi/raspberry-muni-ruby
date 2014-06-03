@@ -20,7 +20,7 @@ class Main
     @lcd = Adafruit::LCD::Char16x2.new{|lcd|
       lcd.clear
       lcd.backlight(Adafruit::LCD::Char16x2::WHITE)
-      lcd.message(predictions())
+      lcd.wrapMessage(predictions())
     }
 
     while true
@@ -69,9 +69,9 @@ class Main
     @isInbound = !@isInbound
     @lcd.clear
     if @isInbound
-      @lcd.message("Inbound")
+      @lcd.wrapMessage("Inbound")
     else
-      @lcd.message("Outbound")
+      @lcd.wrapMessage("Outbound")
     end
     sleep 1 # to see the message
     writeAndSchedulePredictions()
@@ -89,10 +89,10 @@ class Main
 
   def writePredictions()
     @lcd.clear
-    @lcd.message("#{@route.title}:Loading...")
+    @lcd.wrapMessage("#{@route.title}:Loading...")
     str = predictions()
     @lcd.clear
-    @lcd.message(str)
+    @lcd.wrapMessage(str)
   end
 
   # Get a prediction
@@ -104,7 +104,6 @@ class Main
       predictions = @route.outbound.stop_at(@location).predictions
     end
     str = "#{@route.title}:" + predictions.map(&:minutes).join(",")
-    str = str.scan(/.{1,16}/).join("\n")
     puts str
     str
   end

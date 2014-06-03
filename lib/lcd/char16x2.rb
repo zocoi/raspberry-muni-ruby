@@ -6,10 +6,10 @@
 # Adafruit's 16x2 LCD Plate (http://adafruit.com/products/1109)
 #
 # * prerequisite: http://www.skpang.co.uk/blog/archives/575
-# 
+#
 # created on : 2013.06.27
 # last update: 2013.06.28
-# 
+#
 # by meinside@gmail.com
 
 # need 'i2c' gem installed
@@ -18,7 +18,7 @@ require "i2c/backends/i2c-dev"
 
 require_relative "../rpi"
 
-# referenced: 
+# referenced:
 #   https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code/blob/master/Adafruit_CharLCDPlate/Adafruit_CharLCDPlate.py
 module Adafruit
   module LCD
@@ -84,7 +84,7 @@ module Adafruit
           @device = ::I2C.create(device)
         else
           [ :read, :write ].each do |m|
-            raise IncompatibleDeviceException, 
+            raise IncompatibleDeviceException,
             "Missing #{m} method in device object." unless device.respond_to?(m)
           end
           @device = device
@@ -105,7 +105,7 @@ module Adafruit
         # Brute force reload ALL registers to known state.  This also
         # sets up all the input pins, pull-ups, etc. for the Pi Plate.
         @device.write(
-          @address, 0, 
+          @address, 0,
           *[0b00111111,  # IODIRA    R+G LEDs=outputs, buttons=inputs
             @ddrb ,       # IODIRB    LCD D7=input, Blue LED=output
             0b00111111,   # IPOLA     Invert polarity on button inputs
@@ -149,7 +149,7 @@ module Adafruit
         write(LCD_ENTRYMODESET   | @displaymode)
         write(LCD_DISPLAYCONTROL | @displaycontrol)
         write(LCD_RETURNHOME)
-        
+
         if block_given?
           yield self
         end
@@ -204,7 +204,7 @@ module Adafruit
             @device.write(@address, MCP23017_GPIOB, *[lo, hi, lo])
             break if (bits & 0b00000010) == 0 # D7=0, not busy
           end
-          
+
           @portb = lo
 
           # Polling complete, change D7 pin to output
@@ -251,7 +251,7 @@ module Adafruit
           @device.write(@address, MCP23017_GPIOB, *data)
           @portb = data[-1]
         end
-          
+
         # If a poll-worthy instruction was issued, reconfigure D7
         # pin as input to indicate need for polling on next call.
         if !char_mode && POLLABLES.include?(value)
@@ -278,7 +278,7 @@ module Adafruit
         @portb = 0b00000001
         sleep(0.0015)
         @device.write(@address, MCP23017_IOCON_BANK1, 0)
-        @device.write(@address, 0, 
+        @device.write(@address, 0,
           *[0b00111111,   # IODIRA
             @ddrb,        # IODIRB
             0b00000000,   # IPOLA
@@ -420,6 +420,13 @@ module Adafruit
         }
       end
 
+      def wrapMessage(text)
+        text.scan(/.{1,16}/).each_with_index{|line, i|
+          write(0xC0) if i > 0
+          write(line, true)
+        }
+      end
+
       def backlight(color)
         c = ~color
         @porta = (@porta & 0b00111111) | ((c & 0b011) << 6)
@@ -441,4 +448,3 @@ module Adafruit
     end
   end
 end
-
