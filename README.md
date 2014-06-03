@@ -1,4 +1,8 @@
-raspberry-muni
+raspberry-muni-ruby
 ==============
+
+Muni (San Francisco public transportation) prediction powered by Raspberry Pi.
+
+This app fetches bus stops from Nextbus and displays them in Adafruit 16x2 LCD.
 
 ![alt tag](https://github.com/zocoi/raspberry-muni-ruby/raw/master/rasp.jpg)
