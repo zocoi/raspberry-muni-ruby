@@ -47,13 +47,13 @@ class Main
 
   def up()
     @index = @index - 1
-    @route = @routes[index]
+    @route = @routes[@index]
     writeAndSchedulePredictions()
   end
 
   def down()
     @index = @index + 1
-    @route = @routes[index]
+    @route = @routes[@index]
     writeAndSchedulePredictions()
   end
 
