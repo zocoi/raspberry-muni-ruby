@@ -73,11 +73,12 @@ class Main
     else
       @lcd.message("Outbound")
     end
+    sleep 1 # to see the message
     writeAndSchedulePredictions()
   end
 
   def writeAndSchedulePredictions()
-    @t.kill if @t
+    @t.kill if @t.alive?
     @t = Thread.new do
       loop do
         writePredictions()
@@ -88,7 +89,7 @@ class Main
 
   def writePredictions()
     @lcd.clear
-    @lcd.message("Loading...")
+    @lcd.message("#{@route.title}:Loading...")
     str = predictions()
     @lcd.clear
     @lcd.message(str)
