@@ -22,24 +22,30 @@ class Main
       lcd.backlight(Adafruit::LCD::Char16x2::WHITE)
       lcd.wrapMessage(predictions())
     }
+  end
 
-    while true
+  def setupButtons
+    loop do
       buttons = @lcd.buttons
       case
       when (buttons >> Adafruit::LCD::Char16x2::SELECT) & 1 > 0
         puts "SELECT pressed"
       when (buttons >> Adafruit::LCD::Char16x2::LEFT) & 1 > 0
         puts "LEFT pressed"
-        left()
+        @t.kill if @t && @t.alive?
+        @t = Thread.new { left() }
       when (buttons >> Adafruit::LCD::Char16x2::RIGHT) & 1 > 0
         puts "RIGHT pressed"
-        right()
+        @t.kill if @t && @t.alive?
+        @t = Thread.new { right() }
       when (buttons >> Adafruit::LCD::Char16x2::UP) & 1 > 0
         puts "UP pressed"
-        up()
+        @t.kill if @t && @t.alive?
+        @t = Thread.new { up() }
       when (buttons >> Adafruit::LCD::Char16x2::DOWN) & 1 > 0
         puts "DOWN pressed"
-        down()
+        @t.kill if @t && @t.alive?
+        @t = Thread.new { down() }
       end
       sleep 0.1
     end
@@ -78,8 +84,8 @@ class Main
   end
 
   def writeAndSchedulePredictions()
-    @t.kill if @t && @t.alive?
-    @t = Thread.new do
+    @writePredictionsThread.kill if @writePredictionsThread && @writePredictionsThread.alive?
+    @writePredictionsThread = Thread.new do
       loop do
         writePredictions()
         sleep 60
