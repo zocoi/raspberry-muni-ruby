@@ -116,3 +116,4 @@ class Main
 end
 
 main = Main.new
+main.setupButtons
