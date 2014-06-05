@@ -11,10 +11,8 @@ class Main
     # puts routes.inspect
 
     default_index = @routes.index{|route| route.tag =="10"}
-    default_route = @routes[default_index]
 
-    @index ||= default_index
-    @route ||= default_route
+    @route ||= @routes.rotate(default_index)[0]
     @isInbound ||= false
 
     @lcd = Adafruit::LCD::Char16x2.new{|lcd|
@@ -52,14 +50,12 @@ class Main
   end
 
   def up()
-    @index = @index - 1
-    @route = @routes[@index]
+    @route = @routes.rotate(-1)[0]
     writeAndSchedulePredictions()
   end
 
   def down()
-    @index = @index + 1
-    @route = @routes[@index]
+    @route = @routes.rotate(1)[0]
     writeAndSchedulePredictions()
   end
 
