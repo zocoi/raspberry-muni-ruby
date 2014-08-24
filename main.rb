@@ -3,12 +3,11 @@ require_relative "lib/lcd/char16x2"
 
 class Main
 
-  def initialize
-    @location = "Sansome St & Sutter St"
+  def initialize(options = {})
+    @location = options.location || "Sansome St & Sutter St"
 
-    # Find all routes.
-    @routes = Muni::Route.find(:all)
-    # puts routes.inspect
+    # Find specific or all routes.
+    @routes = options.routes || Muni::Route.find(:all)
 
     default_index = @routes.index{|route| route.tag =="10"}
 
@@ -30,20 +29,16 @@ class Main
         puts "SELECT pressed"
       when (buttons >> Adafruit::LCD::Char16x2::LEFT) & 1 > 0
         puts "LEFT pressed"
-        @t.kill if @t && @t.alive?
-        @t = Thread.new { left() }
+        left()
       when (buttons >> Adafruit::LCD::Char16x2::RIGHT) & 1 > 0
         puts "RIGHT pressed"
-        @t.kill if @t && @t.alive?
-        @t = Thread.new { right() }
+        right()
       when (buttons >> Adafruit::LCD::Char16x2::UP) & 1 > 0
         puts "UP pressed"
-        @t.kill if @t && @t.alive?
-        @t = Thread.new { up() }
+        up()
       when (buttons >> Adafruit::LCD::Char16x2::DOWN) & 1 > 0
         puts "DOWN pressed"
-        @t.kill if @t && @t.alive?
-        @t = Thread.new { down() }
+        down()
       end
       sleep 0.1
     end
@@ -111,5 +106,10 @@ class Main
   end
 end
 
-main = Main.new
+main = Main.new(
+  location: "23rd St & Wisconsin St",
+  routes: [
+    {tag: 10}, {tag: 48}
+  ]
+)
 main.setupButtons
