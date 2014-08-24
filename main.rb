@@ -9,7 +9,7 @@ class Main
     # Find specific or all routes.
     @routes = options[:routes] || Muni::Route.find(:all)
 
-    default_index = @routes.index{|route| route.tag == "10"}
+    default_index = @routes.index{|route| route.tag.to_s == "10"}
 
     @route ||= @routes.rotate!(default_index)[0]
     @isInbound ||= false
