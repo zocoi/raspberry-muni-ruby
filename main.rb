@@ -4,10 +4,10 @@ require_relative "lib/lcd/char16x2"
 class Main
 
   def initialize(options = {})
-    @location = options.location || "Sansome St & Sutter St"
+    @location = options[:location] || "Sansome St & Sutter St"
 
     # Find specific or all routes.
-    @routes = options.routes || Muni::Route.find(:all)
+    @routes = options[:routes] || Muni::Route.find(:all)
 
     default_index = @routes.index{|route| route.tag =="10"}
 
