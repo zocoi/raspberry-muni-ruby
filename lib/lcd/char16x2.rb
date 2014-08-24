@@ -421,7 +421,7 @@ module Adafruit
       end
 
       def wrapMessage(text)
-        text.scan(/.{1,16}/).each_with_index{|line, i|
+        text.scan(/.{1,16}/).first(2).each_with_index{|line, i|
           write(0xC0) if i > 0
           write(line, true)
         }
