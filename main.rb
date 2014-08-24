@@ -9,7 +9,7 @@ class Main
     # Find specific or all routes.
     @routes = options[:routes] || Muni::Route.find(:all)
 
-    default_index = @routes.index{|route| route.tag =="10"}
+    default_index = @routes.index{|route| route.tag == "10"}
 
     @route ||= @routes.rotate!(default_index)[0]
     @isInbound ||= false
@@ -109,7 +109,7 @@ end
 main = Main.new(
   location: "23rd St & Wisconsin St",
   routes: [
-    {tag: 10}, {tag: 48}
+    OpenStruct.new(tag: 10), OpenStruct.new(tag: 48)
   ]
 )
 main.setupButtons
